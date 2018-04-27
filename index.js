@@ -10,26 +10,18 @@ exports.eejsBlock_dd_format = function (hook_name, args, cb) {
   return cb();
 }
 
-function getInlineStyle(superscript) {
-  return "superscript: "+superscript+";";
-}
+exports.exportHtmlAdditionalTags = function(hook, pad, cb){
+  var padId = pad.id;
+  cb(["superscript","sup"]);
+};
+
 // line, apool,attribLine,text
 exports.getLineHTMLForExport = function (hook, context) {
-  var header = _analyzeLine(context.attribLine, context.apool);
-  if (header) {
-    var inlineStyle = getInlineStyle(header);
-    return "<sup>" + context.text.substring(1) + "</sup>";
+  if (context.lineContent[0] === '*') {
+    context.lineContent = context.lineContent.substring(1);
   }
-}
+  context.lineContent = context.lineContent.replace(/<superscript>/i, '<sup>');
+  context.lineContent = context.lineContent.replace(/<\/superscript>/i, '</sup>'); 
 
-function _analyzeLine(alineAttrs, apool) {
-  var header = null;
-  if (alineAttrs) {
-    var opIter = Changeset.opIterator(alineAttrs);
-    if (opIter.hasNext()) {
-      var op = opIter.next();
-      header = Changeset.opAttributeValue(op, 'superscript', apool);
-    }
-  }
-  return header;
+  return true;
 }

@@ -5,7 +5,7 @@ var collectContentPre = function(hook, context){
   var state = context.state;
 
   if(tname == "sup"){
-    context.cc.doAttrib(state, "superscript");
+    context.state.lineAttributes['superscript'] = true;
   }
 };
 

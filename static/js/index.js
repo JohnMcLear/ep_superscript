@@ -55,14 +55,20 @@ exports.aceCreateDomLine = function(name, context){
   return [];
 };
 
-function doToggleSuperscript(){
-  this.editorInfo.ace_toggleAttributeOnSelection("superscript");
+function doInsertSuperscript(){
+  var rep = this.rep,
+    documentAttributeManager = this.documentAttributeManager;
+  if (!(rep.selStart && rep.selEnd)){
+    return;
+  }
+
+  documentAttributeManager.setAttributesOnRange(rep.selStart, rep.selEnd, ["superscript", "true"]);
 }
 
 // Once ace is initialized, we set ace_doToggleSuperscript and bind it to the context
 function aceInitialized(hook, context){
   var editorInfo = context.editorInfo;
-  editorInfo.ace_doToggleSuperscript = _(doToggleSuperscript).bind(context);
+  editorInfo.ace_doToggleSuperscript = _(doInsertSuperscript).bind(context);
 }
 
 // Export all hooks
