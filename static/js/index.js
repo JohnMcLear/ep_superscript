@@ -6,7 +6,11 @@ var _ = require('ep_etherpad-lite/static/js/underscore');
 var postAceInit = function(hook, context){
   $('.superscript').click(function(){
     context.ace.callWithAce(function(ace){
-      ace.ace_doToggleSuperscript();
+      if(ace.ace_getAttributeOnSelection("superscript")){
+        ace.ace_setAttributeOnSelection("superscript", false);
+      }else{
+        ace.ace_setAttributeOnSelection("superscript", true);
+      }
     },'insertSuperscript' , true);
   })
 };
@@ -55,23 +59,6 @@ exports.aceCreateDomLine = function(name, context){
   return [];
 };
 
-function doInsertSuperscript(){
-  var rep = this.rep,
-    documentAttributeManager = this.documentAttributeManager;
-  if (!(rep.selStart && rep.selEnd)){
-    return;
-  }
-
-  documentAttributeManager.setAttributesOnRange(rep.selStart, rep.selEnd, ["superscript", "true"]);
-}
-
-// Once ace is initialized, we set ace_doToggleSuperscript and bind it to the context
-function aceInitialized(hook, context){
-  var editorInfo = context.editorInfo;
-  editorInfo.ace_doToggleSuperscript = _(doInsertSuperscript).bind(context);
-}
-
 // Export all hooks
-exports.aceInitialized = aceInitialized;
 exports.postAceInit = postAceInit;
 exports.aceAttribsToClasses = aceAttribsToClasses;
